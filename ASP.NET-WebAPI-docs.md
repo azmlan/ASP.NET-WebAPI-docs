@@ -68,3 +68,128 @@
 43. [CRUD Operations](#crud-operations)
 44. [File Upload/Download](#file-upload-download)
 45. [Background Tasks](#background-tasks)
+
+
+
+
+## Routing
+
+Routing in ASP.NET Web API is responsible for mapping HTTP requests to the appropriate action methods in controllers. It defines how URLs are structured and determines which controller and action method handles a given request.
+
+### Types of Routing
+
+1. **Attribute Routing**
+   - Attribute routing uses attributes to define routes directly on controller actions.
+   - Provides more control over the URIs in your web API.
+   - Example:
+     ```csharp
+     [Route("api/products")]
+     public class ProductsController : ApiController
+     {
+         [HttpGet]
+         [Route("{id:int}")]
+         public IHttpActionResult GetProduct(int id)
+         {
+             // Action method code here
+         }
+     }
+     ```
+
+2. **Convention-based Routing**
+   - Convention-based routing is defined in the `Startup.cs` or `WebApiConfig.cs` file.
+   - Routes are defined using a pattern that matches request URLs to controllers and actions.
+   - Example:
+     ```csharp
+     public static class WebApiConfig
+     {
+         public static void Register(HttpConfiguration config)
+         {
+             config.MapHttpAttributeRoutes();
+             
+             config.Routes.MapHttpRoute(
+                 name: "DefaultApi",
+                 routeTemplate: "api/{controller}/{id}",
+                 defaults: new { id = RouteParameter.Optional }
+             );
+         }
+     }
+     ```
+
+### Defining Routes
+
+- **Route Templates**: Define the pattern for matching request URIs.
+  - Example: `"api/{controller}/{id}"` where `id` is optional.
+- **Route Constraints**: Enforce rules on route parameters (e.g., type constraints).
+  - Example: `[Route("{id:int}")]` ensures `id` is an integer.
+
+### Route Parameters
+
+- **Optional Parameters**: Use `RouteParameter.Optional` to make parameters optional.
+- **Default Values**: Provide default values for parameters.
+  - Example: `{ controller = "Home", id = RouteParameter.Optional }`
+
+### Advanced Routing
+
+- **Custom Route Handlers**: Implement custom route handlers for more complex scenarios.
+- **Route Prefixes**: Use `[RoutePrefix]` attribute to specify a common prefix for all routes in a controller.
+  - Example:
+    ```csharp
+    [RoutePrefix("api/products")]
+    public class ProductsController : ApiController
+    {
+        [HttpGet]
+        [Route("{id:int}")]
+        public IHttpActionResult GetProduct(int id)
+        {
+            // Action method code here
+        }
+    }
+    ```
+
+### Route Debugging
+
+- **Route Debugging Tool**: Use tools like RouteDebugger to troubleshoot routing issues.
+  - Install via NuGet: `Install-Package RouteDebugger`
+  - Add to your route configuration to see detailed route information.
+
+### Common Scenarios
+
+1. **Handling 404 Errors**:
+   - Ensure routes are correctly defined to prevent 404 errors.
+   - Example of a catch-all route to handle 404s:
+     ```csharp
+     config.Routes.MapHttpRoute(
+         name: "NotFound",
+         routeTemplate: "{*url}",
+         defaults: new { controller = "Error", action = "Handle404" }
+     );
+     ```
+
+2. **Versioning**:
+   - Use route prefixes or query parameters to version your API.
+   - Example with route prefix:
+     ```csharp
+     [RoutePrefix("api/v1/products")]
+     public class ProductsV1Controller : ApiController
+     {
+         // Actions for version 1
+     }
+     
+     [RoutePrefix("api/v2/products")]
+     public class ProductsV2Controller : ApiController
+     {
+         // Actions for version 2
+     }
+     ```
+
+### Best Practices
+
+- Keep your route templates simple and consistent.
+- Use attribute routing for more control and clarity.
+- Regularly review and test your routes to ensure they behave as expected.
+
+### Additional Resources
+- [ASP.NET Web API Routing - Official Documentation](https://docs.microsoft.com/en-us/aspnet/web-api/overview/web-api-routing-and-actions/routing-in-aspnet-web-api)
+- [Attribute Routing in ASP.NET Web API 2](https://docs.microsoft.com/en-us/aspnet/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2)
+
+By understanding and effectively using routing, you can create a more organized and efficient ASP.NET Web API application.
